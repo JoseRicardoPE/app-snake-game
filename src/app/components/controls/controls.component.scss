@@ -1,0 +1,56 @@
+@use 'functions' as *;
+@use 'vars' as *;
+@use 'mixins' as *;
+
+:host {
+    width: 100%;
+    .controls {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: calculateRem(16px);
+    }
+    .dpad {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .middle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn {
+        @include font-size($font-size-lg);
+        width: calculateRem(40px);
+        height: calculateRem(40px);
+        background: linear-gradient(to bottom, $color-controls-light, $color-controls-dark);
+        border: calculateRem(2px) solid $color-border-controls;
+        border-radius: 50%;
+        box-shadow: 0 calculateRem(2px) $color-border-controls;
+        color: $color-controls-signs;
+        cursor: pointer;
+        &.center {
+            width: calculateRem(20px);
+            height: calculateRem(20px);
+            background: $color-border-controls;
+        }
+        &:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 calculateRem(2px) calculateRem(2px) rgba(0, 0, 0, 0.2);
+        }
+    }
+    .pause {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: linear-gradient(to bottom, $color-controls-light, $color-controls-dark);
+        border-radius: calculateRem(10px);
+        width: calculateRem(40px);
+        height: calculateRem(40px);
+    }
+}
+

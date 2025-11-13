@@ -1,0 +1,21 @@
+@use 'sass:math';
+@use 'functions' as *;
+@use 'vars' as *;
+
+//? Mixin para asignar font-size en rem a partir de una variable en px
+@mixin font-size($size) {
+    font-size: calculateRem($size);
+}
+
+//? Mixin para los break point (media queries)
+@mixin responsive($device) {
+    $bp: map-get($breakpoints, $device);
+    @if $bp != null {
+        @media (min-width: #{$bp}) {
+            @content;
+        }
+    } @else {
+        @warn "Breakpoint #{$device} no encontrado";
+    }
+}
+

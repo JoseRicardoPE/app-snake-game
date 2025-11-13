@@ -1,0 +1,18 @@
+@use 'sass:math';
+
+//? Function to convert px to rem
+$parentSize: 16px;
+
+@function calculateRem($size) {
+    @if math.unit($size) == "px" {
+        @return math.div($size, $parentSize) * 1rem;
+    }
+
+    //! Ya está en rem, no hace nada
+    @else if math.unit($size) == "rem" {
+        @return $size;
+    }
+
+    @warn "Valor #{$size} no tiene unidad válida para convertir a rem.";
+    @return $size; 
+}

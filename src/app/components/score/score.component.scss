@@ -1,0 +1,31 @@
+@use 'functions' as *;
+@use 'vars' as *;
+@use 'mixins' as *;
+
+:host {
+    display: block;
+    width: 100%;
+    .score-panel {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        line-height: $line-height;
+        box-sizing: border-box;
+    }
+    .score-item {
+        display: flex;
+        flex-direction: column;
+        row-gap: calculateRem(8px);
+    }
+    .label {
+        font-weight: $font-weight-bold;
+        color: $color-text-dark;
+    }
+    .value {
+        @include font-size($font-size-sm);
+        color: $color-text-light;
+    }
+    .value--lifes {
+        text-align: right;
+    }
+}
