@@ -1,3 +1,9 @@
 <div class="board">
-    <div class="board-grid"></div>
+    <ng-container *ngFor="let cell of cells; let i = index">
+        <div class="board-grid"
+        [class.snake]="isSnakeCell(i)"
+        [class.snake-head]="isSnakeHead(i)"
+        [class.snake-tail]="isSnakeTail(i)"
+        [class.food]="isFoodCell(i)"></div>
+    </ng-container>
 </div>

@@ -6,25 +6,64 @@
     display: block;
     width: 100%;
     .board {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: $color-panel;
-        border: calculateRem(2px) solid $color-border-panel;
-        aspect-ratio: 1;
-        position: relative;
-        border-radius: $radius-sm;
-        box-shadow: $shadow-inset-soft;
-    }
-    .board-grid {
         display: grid;
         grid-template-columns: repeat(10, auto);
         grid-template-rows: repeat(10, auto);
+        gap: calculateRem(2px);
+        width: 100%;
+        max-width: calculateRem(320px);
+        aspect-ratio: 1 / 1;
+        margin: 0 auto;
+        padding: calculateRem(8px);
+        background-color: $color-bg-console;
+        border: calculateRem(2px) solid $color-border-panel;
+        border-radius: $radius-md;
+        box-shadow: $shadow-inset-soft;
+    }
+    .board-grid {
         width: 100%;
         height: 100%;
-        background-image: 
-            linear-gradient(to right, $color-panel-gap calculateRem(1px), transparent 1px),
-            linear-gradient(to bottom, $color-panel-gap 1px, transparent 1px);
-        background-size: 10% 10%;
+        background-color: $color-panel;
+        border-radius: $radius-sm;
+        transition: background-color 120ms ease transform 80ms ease;
+    }
+
+    /* Snake body */
+    .snake {
+        background-color: $color-snake-body;
+        box-shadow: inset 0 -2px 2px rgba(0,0,0,0.15);
+    }
+
+    /* Snake head */
+    .snake-head {
+        position: relative;
+        background-color: $color-snake-head;
+        box-shadow:  0 0 calculateRem(6px) rgba(76,134,63,0.45);
+        border-radius: 0 calculateRem(35px) calculateRem(35px) 0;
+        &::after {
+            content: '';
+            position: absolute;
+            width: calculateRem(6px);
+            height: calculateRem(6px);
+            background-color: $color-text-dark;
+            border-radius: 50%;
+            top: calculateRem(3px);
+            left: calculateRem(9px);
+            box-shadow: 0 calculateRem(12px) 0 $color-text-dark;
+        }
+    }
+
+    /* Snake tail */
+    .snake-tail {
+        background-color: darken($color-snake-body, 10%);
+        box-shadow: inset 0 2px 2px rgba(0,0,0,0.15);
+    }
+
+    /* Food */
+    .food {
+        background-color: $color-food;
+        box-shadow: 0 0 calculateRem(6px) rgba(211,71,28,0.45);
+        border-radius: 50%;
+        transform: scale(0.9);
     }
 }
