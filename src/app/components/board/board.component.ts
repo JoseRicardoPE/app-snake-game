@@ -30,10 +30,82 @@ export class BoardComponent implements OnInit {
     window.removeEventListener('keydown', this.handleKeyEvent);
   }
 
+  private handleDirection(key: string) {
+    if (key === 'ArrowUp' && this.direction !== Direction.Down) {
+      this.direction = Direction.Up;
+    } else if (key === 'ArrowDown' && this.direction !== Direction.Up) {
+      this.direction = Direction.Down;
+    } else if (key === 'ArrowLeft' && this.direction !== Direction.Right) {
+      this.direction = Direction.Left;
+    } else if (key === 'ArrowRight' && this.direction !== Direction.Left) {
+      this.direction = Direction.Right;
+    }
+  }
+
+  private handleKeyEvent = (event: KeyboardEvent) => {
+    this.handleDirection(event.key);
+  }
+
   startGameLoop() {
     setInterval(() => {
       this.moveSnake();
-    }, 150);
+    }, 1000);
+  }
+
+  moveSnake() {
+    const headIndex = this.snake[0];
+    let newHeadIndex = headIndex;
+
+    const totalCells = this.gridSize * this.gridSize;
+    const row = Math.floor(headIndex / this.gridSize);
+    const col = headIndex % this.gridSize;
+    
+
+    switch (this.direction) {
+      case Direction.Up:
+        newHeadIndex = headIndex - this.gridSize;
+        break;
+      case Direction.Down:
+        newHeadIndex = headIndex + this.gridSize;
+        break;
+      case Direction.Left:
+        if (col === 0) return this.gameOver(); 
+        newHeadIndex = headIndex - 1;
+        break;
+      case Direction.Right:
+        if (col === this.gridSize - 1) return this.gameOver();
+        newHeadIndex = headIndex + 1;
+        break;
+    }
+
+    // ? Check collisions with walls
+    if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
+      return this.gameOver();
+    }
+
+    // ? Check collisions with self
+    if (this.snake.includes(newHeadIndex)) {
+      return this.gameOver();
+    }
+    
+    // ? Add new head
+    this.snake.unshift(newHeadIndex);
+
+    // ? eat new food
+    if (newHeadIndex === this.food) {
+      this.placeFood();
+    } else {
+      this.snake.pop();
+    }
+
+    this.updateBoard();
+  }
+
+  updateBoard() {}
+
+  gameOver() {
+    alert("GAME OVER 🐍💥");
+    this.ngOnInit(); // reiniciar la partida
   }
 
   private initBoard() {
@@ -78,22 +150,6 @@ export class BoardComponent implements OnInit {
   }
   isSnakeTail(index: number): boolean {
     return this.snake.length > 0 && index === this.snake[this.snake.length - 1];
-  }
-
-  private handleDirection(key: string) {
-    if (key === 'ArrowUp' && this.direction !== Direction.Down) {
-      this.direction = Direction.Up;
-    } else if (key === 'ArrowDown' && this.direction !== Direction.Up) {
-      this.direction = Direction.Down;
-    } else if (key === 'ArrowLeft' && this.direction !== Direction.Right) {
-      this.direction = Direction.Left;
-    } else if (key === 'ArrowRight' && this.direction !== Direction.Left) {
-      this.direction = Direction.Right;
-    }
-  }
-
-  private handleKeyEvent = (event: KeyboardEvent) => {
-    this.handleDirection(event.key);
   }
   
 }
