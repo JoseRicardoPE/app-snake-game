@@ -1,9 +1,15 @@
 <div class="board">
     <ng-container *ngFor="let cell of cells; let i = index">
         <div class="board-grid"
-        [class.snake]="isSnakeCell(i)"
-        [class.snake-head]="isSnakeHead(i)"
-        [class.snake-tail]="isSnakeTail(i)"
-        [class.food]="isFoodCell(i)"></div>
+            [class.snake-head]="isSnakeHead(i)"
+            [class.snake-head-up]="isSnakeHead(i) && direction === Direction.Up"
+            [class.snake-head-down]="isSnakeHead(i) && direction === Direction.Down"
+            [class.snake-head-left]="isSnakeHead(i) && direction === Direction.Left"
+            [class.snake-head-right]="isSnakeHead(i) && direction === Direction.Right"
+            [class.snake-body]="isSnakeCell(i)"
+            [class.snake-tail]="isSnakeTail(i)"
+            [class.food]="isFoodCell(i)"
+        >
+        </div>
     </ng-container>
 </div>

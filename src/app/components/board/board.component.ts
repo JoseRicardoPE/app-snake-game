@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Direction } from './enum/direction';
 
 @Component({
@@ -10,6 +10,7 @@ import { Direction } from './enum/direction';
 })
 export class BoardComponent implements OnInit {
 
+  Direction = Direction;
   direction: Direction = Direction.Right;
 
   gridSize: number = 10;
@@ -17,6 +18,10 @@ export class BoardComponent implements OnInit {
   snake: number[] = [];
   food = 0;
 
+  gameInterval: any;
+  
+  @Input() isPaused: boolean = false;
+  @Input() externalDirection: string | null = null;
 
   ngOnInit(): void {
     this.initBoard();
@@ -28,6 +33,22 @@ export class BoardComponent implements OnInit {
 
   ngOnDestroy(): void {
     window.removeEventListener('keydown', this.handleKeyEvent);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    
+    if (changes['externalDirection'] && this.externalDirection) {
+      this.handleDirection(this.externalDirection);
+    }
+    
+    if (changes['isPaused']) {
+      if (this.isPaused) {
+        console.log('En pause');
+      } else {
+        console.log('Reanudado');
+      }
+    }
+    
   }
 
   private handleDirection(key: string) {
@@ -47,8 +68,12 @@ export class BoardComponent implements OnInit {
   }
 
   startGameLoop() {
-    setInterval(() => {
-      this.moveSnake();
+    if (this.gameInterval) return;
+
+    this.gameInterval = setInterval(() => {
+      if (!this.isPaused) {
+        this.moveSnake();
+      }
     }, 1000);
   }
 
@@ -103,9 +128,20 @@ export class BoardComponent implements OnInit {
 
   updateBoard() {}
 
+  resetGame() {
+    clearInterval(this.gameInterval);
+    this.gameInterval = null;
+    this.direction = Direction.Right;
+    this.snake = [];
+    this.initBoard();
+    this.placeInitialSnake();
+    this.placeFood();
+    this.startGameLoop();
+  }
+
   gameOver() {
     alert("GAME OVER 🐍💥");
-    this.ngOnInit(); // reiniciar la partida
+    this.resetGame();
   }
 
   private initBoard() {
@@ -139,17 +175,17 @@ export class BoardComponent implements OnInit {
   }
 
   // Helpers usados por el template
-  isFoodCell(index: number): boolean {
-    return this.food === index;
-  }
-  isSnakeCell(index: number): boolean {
-    return this.snake.includes(index);
-  }
   isSnakeHead(index: number): boolean {
     return this.snake.length > 0 && index === this.snake[0];
   }
   isSnakeTail(index: number): boolean {
     return this.snake.length > 0 && index === this.snake[this.snake.length - 1];
+  }
+  isSnakeCell(index: number): boolean {
+    return this.snake.includes(index);
+  }
+  isFoodCell(index: number): boolean {
+    return this.food === index;
   }
   
 }

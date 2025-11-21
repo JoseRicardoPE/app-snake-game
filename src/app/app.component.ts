@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ScoreComponent } from "./components/score/score.component";
 import { BoardComponent } from "./components/board/board.component";
 import { ControlsComponent } from "./components/controls/controls.component";
@@ -10,5 +10,14 @@ import { ControlsComponent } from "./components/controls/controls.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'snake-game';
+  
+  @Input() externalDirection: string | null = null;
+  @Input() pauseSignal: boolean = false;
+  isPaused = false; 
+
+  togglePauseUI() {
+    this.isPaused = !this.isPaused;
+    this.pauseSignal = true;
+  }
+
 }

@@ -1,5 +1,13 @@
 <div class="game-container">
     <app-score></app-score>
-    <app-board></app-board>
-    <app-controls></app-controls>
+    <app-board
+        #boardRef    
+        [externalDirection]="externalDirection"
+        [isPaused]="isPaused"
+    ></app-board>
+    <app-controls
+        (direction)="externalDirection = $event"
+        (pauseClicked)="togglePauseUI()"
+        [isPaused]="isPaused"
+    ></app-controls>
 </div>

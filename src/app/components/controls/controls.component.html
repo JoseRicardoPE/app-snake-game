@@ -1,26 +1,27 @@
 <div class="controls">
   <div class="dpad">
-    <button class="btn up">
+    <button class="btn up" (click)="emitDirection('ArrowUp')">
       <i class="fa-solid fa-arrow-up"></i>
     </button>
     <div class="middle">
-      <button class="btn left">
+      <button class="btn left" (click)="emitDirection('ArrowLeft')">
         <i class="fa-solid fa-arrow-left"></i>
       </button>
-      <button class="btn center">
-        
-      </button>
-      <button class="btn right">
+
+      <button class="btn center"></button>
+
+      <button class="btn right" (click)="emitDirection('ArrowRight')">
         <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
-    <button class="btn down">
+    <button class="btn down" (click)="emitDirection('ArrowDown')">
       <i class="fa-solid fa-arrow-down"></i>
     </button>
   </div>
 
-  <button class="btn pause">
-    <i class="fa-solid fa-pause"></i>
+  <button class="btn pause" (click)="emitPause()">
+    <i *ngIf="!isPaused" class="fa-solid fa-pause"></i>
+    <i *ngIf="isPaused" class="fa-solid fa-play"></i>
   </button>
 </div>
 

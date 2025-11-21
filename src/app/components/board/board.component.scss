@@ -29,14 +29,14 @@
     }
 
     /* Snake body */
-    .snake {
+    .snake-body {
+        position: relative;
         background-color: $color-snake-body;
         box-shadow: inset 0 -2px 2px rgba(0,0,0,0.15);
     }
 
     /* Snake head */
     .snake-head {
-        position: relative;
         background-color: $color-snake-head;
         box-shadow:  0 0 calculateRem(6px) rgba(76,134,63,0.45);
         border-radius: 0 calculateRem(35px) calculateRem(35px) 0;
@@ -50,6 +50,18 @@
             top: calculateRem(3px);
             left: calculateRem(9px);
             box-shadow: 0 calculateRem(12px) 0 $color-text-dark;
+        }
+        &.snake-head-up {
+            transform: rotate(-90deg);
+        }
+        &.snake-head-down {
+            transform: rotate(90deg);
+        }
+        &.snake-head-left {
+            transform: rotate(180deg);
+        }
+        &.snake-head-right {
+            transform: rotate(0deg);
         }
     }
 
