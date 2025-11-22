@@ -8,4 +8,5 @@ import { Component, Input } from '@angular/core';
 })
 export class ScoreComponent {
   @Input() lives: number = 3;
+  @Input() score: number = 0;
 }

@@ -18,10 +18,12 @@ export class BoardComponent implements OnInit {
   food = 0;
   gameInterval: any;
   lives: number = 3;
+  score: number = 0;
   
   @Input() isPaused: boolean = false;
   @Input() externalDirection: string | null = null;
   @Output() livesChange = new EventEmitter<number>();
+  @Output() scoreChange = new EventEmitter<number>();
 
   ngOnInit(): void {
     this.initBoard();
@@ -107,6 +109,11 @@ export class BoardComponent implements OnInit {
         break;
     }
 
+    // Increment score for each successful move
+    if (newHeadIndex === this.food) {
+      this.score++;
+      this.scoreChange.emit(this.score);
+    }
     // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
       return this.gameOver();
@@ -136,6 +143,8 @@ export class BoardComponent implements OnInit {
   resetGame() {
     this.lives = 3;
     this.livesChange.emit(this.lives);
+    this.score = 0;
+    this.scoreChange.emit(this.score);
     clearInterval(this.gameInterval);
     this.gameInterval = null;
     this.direction = Direction.Right;
@@ -155,7 +164,7 @@ export class BoardComponent implements OnInit {
 
   // Handle game over scenario and life management
   gameOver() {
-    if (this.lives <= 0) {
+    if (this.lives <= 1) {
       alert("GAME OVER 🐍💥");
       this.resetGame();
     } else {

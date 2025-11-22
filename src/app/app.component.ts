@@ -11,10 +11,11 @@ import { ControlsComponent } from "./components/controls/controls.component";
 })
 export class AppComponent {
   
-  isPaused = false;
-  lives: number = 3;
   @Input() externalDirection: string | null = null;
   @Input() pauseSignal: boolean = false;
+  isPaused = false;
+  lives: number = 3;
+  score: number = 0;
 
   togglePauseUI() {
     this.isPaused = !this.isPaused;
@@ -23,6 +24,10 @@ export class AppComponent {
 
   updateLives(newLives: number) {
     this.lives = newLives;
+  }
+
+  updateScore(newScore: number) {
+    this.score = newScore;
   }
 
 }
