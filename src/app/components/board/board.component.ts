@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Direction } from './enum/direction';
 
 @Component({
@@ -12,16 +12,16 @@ export class BoardComponent implements OnInit {
 
   Direction = Direction;
   direction: Direction = Direction.Right;
-
   gridSize: number = 10;
   cells: number[] = [];
   snake: number[] = [];
   food = 0;
-
   gameInterval: any;
+  lives: number = 3;
   
   @Input() isPaused: boolean = false;
   @Input() externalDirection: string | null = null;
+  @Output() livesChange = new EventEmitter<number>();
 
   ngOnInit(): void {
     this.initBoard();
@@ -51,6 +51,7 @@ export class BoardComponent implements OnInit {
     
   }
 
+  // Handle direction changes based on key input
   private handleDirection(key: string) {
     if (key === 'ArrowUp' && this.direction !== Direction.Down) {
       this.direction = Direction.Up;
@@ -63,10 +64,12 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  // Key event listener
   private handleKeyEvent = (event: KeyboardEvent) => {
     this.handleDirection(event.key);
   }
 
+  // Start the main game loop
   startGameLoop() {
     if (this.gameInterval) return;
 
@@ -77,6 +80,7 @@ export class BoardComponent implements OnInit {
     }, 1000);
   }
 
+  // Move the snake based on the current direction
   moveSnake() {
     const headIndex = this.snake[0];
     let newHeadIndex = headIndex;
@@ -103,20 +107,20 @@ export class BoardComponent implements OnInit {
         break;
     }
 
-    // ? Check collisions with walls
+    // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
       return this.gameOver();
     }
 
-    // ? Check collisions with self
+    // Check collisions with self
     if (this.snake.includes(newHeadIndex)) {
       return this.gameOver();
     }
     
-    // ? Add new head
+    // Add new head
     this.snake.unshift(newHeadIndex);
 
-    // ? eat new food
+    // eat new food
     if (newHeadIndex === this.food) {
       this.placeFood();
     } else {
@@ -128,7 +132,10 @@ export class BoardComponent implements OnInit {
 
   updateBoard() {}
 
+  // Reset the entire game
   resetGame() {
+    this.lives = 3;
+    this.livesChange.emit(this.lives);
     clearInterval(this.gameInterval);
     this.gameInterval = null;
     this.direction = Direction.Right;
@@ -139,11 +146,26 @@ export class BoardComponent implements OnInit {
     this.startGameLoop();
   }
 
-  gameOver() {
-    alert("GAME OVER 🐍💥");
-    this.resetGame();
+  // Reset the snake and food after a collision but without restarting the whole game
+  private resetAfterCollisionSnake() {
+    this.direction = Direction.Right;
+    this.placeInitialSnake();
+    this.placeFood();
   }
 
+  // Handle game over scenario and life management
+  gameOver() {
+    if (this.lives <= 0) {
+      alert("GAME OVER 🐍💥");
+      this.resetGame();
+    } else {
+      this.lives--;
+      this.livesChange.emit(this.lives);
+      this.resetAfterCollisionSnake();
+    }  
+  }
+
+  // Initialize the board grid
   private initBoard() {
     const total = this.gridSize * this.gridSize;
     this.cells = Array.from({ length: total }, (_, i) => i);
@@ -154,6 +176,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  // Place the initial snake in the center of the board
   private placeInitialSnake() {
     const centerRow = Math.floor(this.gridSize / 2);
     const centerCol = Math.floor(this.gridSize / 2);
@@ -161,10 +184,12 @@ export class BoardComponent implements OnInit {
     this.snake = [headIndex, headIndex - 1, headIndex -2];
   }
 
+  // Place food in a random empty cell
   private placeFood() {
     this.food = this.randomEmptyCell();
   }
 
+  // Get a random empty cell index
   private randomEmptyCell(): number {
     const total = this.gridSize * this.gridSize;
     let idx = Math.floor(Math.random() * total);
@@ -174,7 +199,8 @@ export class BoardComponent implements OnInit {
     return idx;
   }
 
-  // Helpers usados por el template
+  // Helpers to identify cell types
+  // Determine if a cell is part of the snake's head, tail, body, or food
   isSnakeHead(index: number): boolean {
     return this.snake.length > 0 && index === this.snake[0];
   }

@@ -1,9 +1,12 @@
 <div class="game-container">
-    <app-score></app-score>
+    <app-score
+        [lives]="lives"
+    ></app-score>
     <app-board
         #boardRef    
         [externalDirection]="externalDirection"
         [isPaused]="isPaused"
+        (livesChange)="updateLives($event)"
     ></app-board>
     <app-controls
         (direction)="externalDirection = $event"

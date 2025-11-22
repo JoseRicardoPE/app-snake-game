@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-score',
@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './score.component.scss'
 })
 export class ScoreComponent {
-
+  @Input() lives: number = 3;
 }
