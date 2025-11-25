@@ -19,6 +19,8 @@ export class BoardComponent implements OnInit {
   gameInterval: any;
   lives: number = 3;
   score: number = 0;
+  snake_speed: number = 1000;
+  level_speed: number = 1;
   
   @Input() isPaused: boolean = false;
   @Input() externalDirection: string | null = null;
@@ -79,7 +81,7 @@ export class BoardComponent implements OnInit {
       if (!this.isPaused) {
         this.moveSnake();
       }
-    }, 1000);
+    }, this.snake_speed);
   }
 
   // Move the snake based on the current direction
@@ -109,16 +111,14 @@ export class BoardComponent implements OnInit {
         break;
     }
 
-    // Increment score for each successful move
     if (newHeadIndex === this.food) {
-      this.score++;
       this.scoreChange.emit(this.score);
     }
     // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
       return this.gameOver();
     }
-
+    
     // Check collisions with self
     if (this.snake.includes(newHeadIndex)) {
       return this.gameOver();
@@ -126,9 +126,13 @@ export class BoardComponent implements OnInit {
     
     // Add new head
     this.snake.unshift(newHeadIndex);
-
+    
     // eat new food
     if (newHeadIndex === this.food) {
+      // Increment score for each successful move
+      this.score++;
+      this.scoreChange.emit(this.score);
+      this.increaseSpeed();
       this.placeFood();
     } else {
       this.snake.pop();
@@ -137,28 +141,56 @@ export class BoardComponent implements OnInit {
     this.updateBoard();
   }
 
+  increaseSpeed() {
+    if (this.score >= 0 && this.score % 5 === 0) {
+      this.level_speed++;
+      this.snake_speed = 1000 / this.level_speed;
+      this.restartGameLoop();
+    }
+  }
+
+  restartGameLoop() {
+    clearInterval(this.gameInterval);
+    this.gameInterval = null;
+    this.startGameLoop();
+  }
+
   updateBoard() {}
 
   // Reset the entire game
   resetGame() {
     this.lives = 3;
     this.livesChange.emit(this.lives);
+
     this.score = 0;
     this.scoreChange.emit(this.score);
+
+    this.level_speed = 1;
+    this.snake_speed = 1000;
+
     clearInterval(this.gameInterval);
     this.gameInterval = null;
+    
     this.direction = Direction.Right;
     this.snake = [];
     this.initBoard();
     this.placeInitialSnake();
     this.placeFood();
+
     this.startGameLoop();
+    
   }
 
   // Reset the snake and food after a collision but without restarting the whole game
   private resetAfterCollisionSnake() {
+    const head = this.snake[0];
+
     this.direction = Direction.Right;
-    this.placeInitialSnake();
+    
+    const length = this.snake.length;
+
+    this.snake = Array.from({ length }, (_, i) => head - i);
+
     this.placeFood();
   }
 
@@ -167,6 +199,7 @@ export class BoardComponent implements OnInit {
     if (this.lives <= 1) {
       alert("GAME OVER 🐍💥");
       this.resetGame();
+      return;
     } else {
       this.lives--;
       this.livesChange.emit(this.lives);
@@ -190,7 +223,9 @@ export class BoardComponent implements OnInit {
     const centerRow = Math.floor(this.gridSize / 2);
     const centerCol = Math.floor(this.gridSize / 2);
     const headIndex = centerRow * this.gridSize + centerCol + 2;
-    this.snake = [headIndex, headIndex - 1, headIndex -2];
+
+    // Snake init with two segments
+    this.snake = [headIndex, headIndex - 1];
   }
 
   // Place food in a random empty cell
