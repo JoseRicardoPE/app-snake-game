@@ -10,6 +10,8 @@ import { Direction } from './enum/direction';
 })
 export class BoardComponent implements OnInit {
 
+  private readonly BASE_SPEED: number = 600;
+  
   Direction = Direction;
   direction: Direction = Direction.Right;
   gridSize: number = 10;
@@ -17,11 +19,11 @@ export class BoardComponent implements OnInit {
   snake: number[] = [];
   food = 0;
   gameInterval: any;
-  lives: number = 3;
+  lives: number = 2;
   score: number = 0;
-  snake_speed: number = 1000;
+  snake_speed: number = 600;
   level_speed: number = 1;
-  
+    
   @Input() isPaused: boolean = false;
   @Input() externalDirection: string | null = null;
   @Output() livesChange = new EventEmitter<number>();
@@ -111,9 +113,6 @@ export class BoardComponent implements OnInit {
         break;
     }
 
-    if (newHeadIndex === this.food) {
-      this.scoreChange.emit(this.score);
-    }
     // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
       return this.gameOver();
@@ -129,9 +128,13 @@ export class BoardComponent implements OnInit {
     
     // eat new food
     if (newHeadIndex === this.food) {
+      
+      const bonus = this.difficulty;
+
       // Increment score for each successful move
-      this.score++;
+      this.score += bonus;
       this.scoreChange.emit(this.score);
+      
       this.increaseSpeed();
       this.placeFood();
     } else {
@@ -141,10 +144,13 @@ export class BoardComponent implements OnInit {
     this.updateBoard();
   }
 
+  get difficulty(): number {
+    return Math.floor(this.BASE_SPEED / this.snake_speed);
+  }
+
   increaseSpeed() {
-    if (this.score >= 0 && this.score % 5 === 0) {
-      this.level_speed++;
-      this.snake_speed = 1000 / this.level_speed;
+    if (this.snake_speed > 120) {
+      this.snake_speed -= 20;
       this.restartGameLoop();
     }
   }
@@ -159,14 +165,14 @@ export class BoardComponent implements OnInit {
 
   // Reset the entire game
   resetGame() {
-    this.lives = 3;
+    this.lives = 2;
     this.livesChange.emit(this.lives);
 
     this.score = 0;
     this.scoreChange.emit(this.score);
 
     this.level_speed = 1;
-    this.snake_speed = 1000;
+    this.snake_speed = 600;
 
     clearInterval(this.gameInterval);
     this.gameInterval = null;
