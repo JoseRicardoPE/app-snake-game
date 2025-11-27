@@ -11,7 +11,7 @@ import { Direction } from './enum/direction';
 export class BoardComponent implements OnInit {
 
   private readonly BASE_SPEED: number = 600;
-  
+
   Direction = Direction;
   direction: Direction = Direction.Right;
   gridSize: number = 10;
@@ -19,7 +19,7 @@ export class BoardComponent implements OnInit {
   snake: number[] = [];
   food = 0;
   gameInterval: any;
-  lives: number = 2;
+  lives: number = 1;
   score: number = 0;
   snake_speed: number = 600;
   level_speed: number = 1;
@@ -145,7 +145,7 @@ export class BoardComponent implements OnInit {
   }
 
   get difficulty(): number {
-    return Math.floor(this.BASE_SPEED / this.snake_speed);
+    return Math.max(1, Math.floor(this.BASE_SPEED / this.snake_speed));
   }
 
   increaseSpeed() {
@@ -165,7 +165,7 @@ export class BoardComponent implements OnInit {
 
   // Reset the entire game
   resetGame() {
-    this.lives = 2;
+    this.lives = 1;
     this.livesChange.emit(this.lives);
 
     this.score = 0;

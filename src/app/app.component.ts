@@ -14,7 +14,7 @@ export class AppComponent {
   @Input() externalDirection: string | null = null;
   @Input() pauseSignal: boolean = false;
   isPaused = false;
-  lives: number = 2;
+  lives: number = 1;
   score: number = 0;
 
   togglePauseUI() {
