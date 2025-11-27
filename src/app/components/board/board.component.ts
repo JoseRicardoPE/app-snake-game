@@ -144,10 +144,23 @@ export class BoardComponent implements OnInit {
     this.updateBoard();
   }
 
+  get getColorSnake(): string {
+    switch (this.difficulty) {
+      case 1: return 'snake-level-1';
+      case 2: return 'snake-level-2';
+      case 3: return 'snake-level-3';
+      case 4: return 'snake-level-4';
+      case 5: return 'snake-level-5';
+      default: return 'snake-level-6';
+    }
+  }
+
+  // Calculate current difficulty level based on snake speeed
   get difficulty(): number {
     return Math.max(1, Math.floor(this.BASE_SPEED / this.snake_speed));
   }
 
+  // Increase snake speed as the game progresses
   increaseSpeed() {
     if (this.snake_speed > 120) {
       this.snake_speed -= 20;
@@ -155,6 +168,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  // Restart the game loop with the updated speed
   restartGameLoop() {
     clearInterval(this.gameInterval);
     this.gameInterval = null;

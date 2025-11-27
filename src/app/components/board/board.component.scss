@@ -31,13 +31,72 @@
     /* Snake body */
     .snake-body {
         position: relative;
-        background-color: $color-snake-body;
         box-shadow: inset 0 -2px 2px rgba(0,0,0,0.15);
     }
 
+    .snake-level-1 {
+        background-color: #48b34b;
+        &.snake-head {
+            background-color: #57d85e;
+        }
+        &.snake-tail {
+            background-color: #388e3c;
+        }
+    }
+
+    .snake-level-2 {
+        background-color: #cddc39;
+        &.snake-head {
+            background-color: #d1db7b;
+        }
+        &.snake-tail {
+            background-color: #c4c93e;
+        }
+    }
+
+    .snake-level-3 {
+        background-color: #ff9800;
+        &.snake-head {
+            background-color: #ffcc80;
+        }
+        &.snake-tail {
+            background-color: #ef6c00;
+        }
+    }
+
+    .snake-level-4 {
+        background-color: #f44336;
+        &.snake-head {
+            background-color: #ef9a9a;
+        }
+        &.snake-tail {
+            background-color: #c62828;
+        }
+    }
+
+    .snake-level-5 {
+        background-color: #d500f9;
+        &.snake-head {
+            background-color: #ea80fc;
+        }
+        &.snake-tail {
+            background-color: #aa00ff;
+        }
+    }
+    
+    .snake-level-6 {
+        background-color: #2979ff;
+        &.snake-head {
+            background-color: #82b1ff;
+        }
+        &.snake-tail {
+            background-color: #004ecb;
+        }
+    }
+    
+
     /* Snake head */
     .snake-head {
-        background-color: $color-snake-head;
         box-shadow:  0 0 calculateRem(6px) rgba(76,134,63,0.45);
         border-radius: 0 calculateRem(35px) calculateRem(35px) 0;
         &::after {
@@ -66,10 +125,10 @@
     }
 
     /* Snake tail */
-    .snake-tail {
-        background-color: darken($color-snake-body, 10%);
-        box-shadow: inset 0 2px 2px rgba(0,0,0,0.15);
-    }
+    // .snake-tail {
+    //     background-color: darken($color-snake-body, 10%);
+    //     box-shadow: inset 0 2px 2px rgba(0,0,0,0.15);
+    // }
 
     /* Food */
     .food {
