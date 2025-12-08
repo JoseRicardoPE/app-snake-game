@@ -25,5 +25,8 @@
     .value {
         @include font-size($font-size-sm);
         color: $color-text-light;
+        border: calculateRem(2px) solid $color-border-panel;
+        border-radius: calculateRem(8px);
+        text-align: center;
     }
 }
