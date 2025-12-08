@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ScoreComponent } from "./components/score/score.component";
 import { BoardComponent } from "./components/board/board.component";
 import { ControlsComponent } from "./components/controls/controls.component";
+import { GameService } from './services/game.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,15 @@ export class AppComponent {
   isPaused = false;
   lives: number = 1;
   score: number = 0;
+  highScore: number = 0;
+
+  constructor(
+    private gameService: GameService,
+  ) {}
+
+  ngOnInit() {
+    this.highScore = this.gameService.getHighScore();
+  }
 
   togglePauseUI() {
     this.isPaused = !this.isPaused;
@@ -28,6 +38,7 @@ export class AppComponent {
 
   updateScore(newScore: number) {
     this.score = newScore;
+    this.highScore = this.gameService.getHighScore();
   }
 
 }

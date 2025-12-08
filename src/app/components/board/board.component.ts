@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Direction } from './enum/direction';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-board',
@@ -28,6 +29,10 @@ export class BoardComponent implements OnInit {
   @Input() externalDirection: string | null = null;
   @Output() livesChange = new EventEmitter<number>();
   @Output() scoreChange = new EventEmitter<number>();
+
+  constructor(
+    private gameService: GameService,
+  ) {}
 
   ngOnInit(): void {
     this.initBoard();
@@ -216,6 +221,9 @@ export class BoardComponent implements OnInit {
 
   // Handle game over scenario and life management
   gameOver() {
+    
+    this.gameService.setHighScore(this.score);
+
     if (this.lives <= 1) {
       alert("GAME OVER 🐍💥");
       this.resetGame();
