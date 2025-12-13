@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { ScoreComponent } from "./components/score/score.component";
 import { BoardComponent } from "./components/board/board.component";
 import { ControlsComponent } from "./components/controls/controls.component";
@@ -13,7 +13,6 @@ import { GameService } from './services/game.service';
 export class AppComponent {
   
   @Input() externalDirection: string | null = null;
-  @Input() pauseSignal: boolean = false;
   isPaused = false;
   lives: number = 1;
   score: number = 0;
@@ -27,9 +26,16 @@ export class AppComponent {
     this.highScore = this.gameService.getHighScore();
   }
 
-  togglePauseUI() {
+  togglePause() {
     this.isPaused = !this.isPaused;
-    this.pauseSignal = true;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyEvent(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      this.togglePause();
+    }
   }
 
   updateLives(newLives: number) {
