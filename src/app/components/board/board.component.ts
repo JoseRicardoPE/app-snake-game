@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Direction } from './enum/direction';
 import { GameService } from '../../services/game.service';
 
@@ -10,6 +10,11 @@ import { GameService } from '../../services/game.service';
   styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit {
+
+  @Input() isPaused: boolean = false;
+  @Input() externalDirection: string | null = null;
+  @Output() livesChange = new EventEmitter<number>();
+  @Output() scoreChange = new EventEmitter<number>();
 
   private readonly BASE_SPEED: number = 600;
 
@@ -24,12 +29,8 @@ export class BoardComponent implements OnInit {
   score: number = 0;
   snake_speed: number = 600;
   level_speed: number = 1;
+  allowVibration: boolean = false;
     
-  @Input() isPaused: boolean = false;
-  @Input() externalDirection: string | null = null;
-  @Output() livesChange = new EventEmitter<number>();
-  @Output() scoreChange = new EventEmitter<number>();
-
   constructor(
     private gameService: GameService,
   ) {}
@@ -62,17 +63,10 @@ export class BoardComponent implements OnInit {
     
   }
 
-  // Handle direction changes based on key input
-  private handleDirection(key: string) {
-    if (key === 'ArrowUp' && this.direction !== Direction.Down) {
-      this.direction = Direction.Up;
-    } else if (key === 'ArrowDown' && this.direction !== Direction.Up) {
-      this.direction = Direction.Down;
-    } else if (key === 'ArrowLeft' && this.direction !== Direction.Right) {
-      this.direction = Direction.Left;
-    } else if (key === 'ArrowRight' && this.direction !== Direction.Left) {
-      this.direction = Direction.Right;
-    }
+  @HostListener('window:touchstart', ['$event'])
+  @HostListener('window:keydown', ['$event'])
+  enableVibration() {
+    this.allowVibration = true;
   }
 
   // Key event listener
@@ -91,41 +85,63 @@ export class BoardComponent implements OnInit {
     }, this.snake_speed);
   }
 
+  // Helper vibrate function
+  private vibrate() {
+    
+    if (this.allowVibration &&  'vibrate' in navigator && window.matchMedia('(pointer: coarse)').matches) {
+      requestAnimationFrame(() => {
+        navigator.vibrate([400, 120, 400]);
+      })
+    }
+    
+  }
+
   // Move the snake based on the current direction
   moveSnake() {
     const headIndex = this.snake[0];
     let newHeadIndex = headIndex;
 
     const totalCells = this.gridSize * this.gridSize;
-    const row = Math.floor(headIndex / this.gridSize);
     const col = headIndex % this.gridSize;
     
 
     switch (this.direction) {
-      case Direction.Up:
+      case Direction.Up: 
         newHeadIndex = headIndex - this.gridSize;
         break;
       case Direction.Down:
-        newHeadIndex = headIndex + this.gridSize;
+        newHeadIndex += this.gridSize;
         break;
       case Direction.Left:
-        if (col === 0) return this.gameOver(); 
-        newHeadIndex = headIndex - 1;
+        if (col === 0) {
+          this.vibrate();
+          this.gameOver();
+          return;
+        } 
+        newHeadIndex -= 1;
         break;
       case Direction.Right:
-        if (col === this.gridSize - 1) return this.gameOver();
-        newHeadIndex = headIndex + 1;
+        if (col === this.gridSize - 1) {
+          this.vibrate();
+          this.gameOver();
+          return;
+        }
+        newHeadIndex += 1;
         break;
     }
 
     // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
-      return this.gameOver();
+      this.vibrate();
+      this.gameOver();
+      return;
     }
     
     // Check collisions with self
     if (this.snake.includes(newHeadIndex)) {
-      return this.gameOver();
+      this.vibrate();
+      this.gameOver();
+      return;
     }
     
     // Add new head
@@ -147,6 +163,19 @@ export class BoardComponent implements OnInit {
     }
 
     this.updateBoard();
+  }
+
+  // Handle direction changes based on key input
+  private handleDirection(key: string) {
+    if (key === 'ArrowUp' && this.direction !== Direction.Down) {
+      this.direction = Direction.Up;
+    } else if (key === 'ArrowDown' && this.direction !== Direction.Up) {
+      this.direction = Direction.Down;
+    } else if (key === 'ArrowLeft' && this.direction !== Direction.Right) {
+      this.direction = Direction.Left;
+    } else if (key === 'ArrowRight' && this.direction !== Direction.Left) {
+      this.direction = Direction.Right;
+    }
   }
 
   get getColorSnake(): string {
