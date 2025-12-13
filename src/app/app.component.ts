@@ -12,6 +12,10 @@ import { GameService } from './services/game.service';
 })
 export class AppComponent {
   
+  private touchStartX: number = 0;
+  private touchStartY: number = 0;
+  private readonly SWIPE_THRESHOLD: number = 30; // Sensibilidad del swipe
+
   @Input() externalDirection: string | null = null;
   isPaused = false;
   lives: number = 1;
@@ -45,6 +49,38 @@ export class AppComponent {
   updateScore(newScore: number) {
     this.score = newScore;
     this.highScore = this.gameService.getHighScore();
+  }
+
+  // Detectar swipe en dispositivos táctiles
+  @HostListener('touchstart', ['$event']) 
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.touches[0].clientX;
+    this.touchStartY = event.touches[0].clientY;
+  }
+
+  @HostListener('touchend', ['$event'])
+  onTouchEnd(event: TouchEvent) {
+
+    // Para evitar que swipe funcione cuando el juego está en pausa
+    if (this.isPaused) return;
+
+    const touchEndX = event.changedTouches[0].clientX;
+    const touchEndY = event.changedTouches[0].clientY;
+
+    const deltaX = touchEndX - this.touchStartX;
+    const deltaY = touchEndY - this.touchStartY;
+
+    // Evitar micromovimientos
+    if (Math.abs(deltaX) < this.SWIPE_THRESHOLD && Math.abs(deltaY) < this.SWIPE_THRESHOLD) {
+      return;
+    }
+
+    // Horizontal vs Vertical swipe
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      this.externalDirection = deltaX > 0 ? 'ArrowRight' : 'ArrowLeft';
+    } else {
+      this.externalDirection = deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+    }
   }
 
 }

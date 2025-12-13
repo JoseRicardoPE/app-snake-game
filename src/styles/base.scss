@@ -10,7 +10,7 @@ body {
     background-color: $color-bg-light;
     font-family: $font-family-main;
     overscroll-behavior: none;
-    touch-action: manipulation;
+    touch-action: none;
 }
 
 .game-container {
