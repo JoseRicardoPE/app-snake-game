@@ -2,6 +2,8 @@
 @use 'vars' as *;
 @use 'mixins' as *;
 
+$button-width: calculateRem(44px);
+
 :host {
     width: 100%;
     .controls {
@@ -25,8 +27,8 @@
     }
     .btn {
         @include font-size($font-size-lg);
-        width: calculateRem(40px);
-        height: calculateRem(40px);
+        width: $button-width;
+        height: $button-width;
         background: linear-gradient(to bottom, $color-controls-light, $color-controls-dark);
         border: calculateRem(2px) solid $color-border-controls;
         border-radius: 50%;
@@ -49,8 +51,21 @@
         right: 0;
         background: linear-gradient(to bottom, $color-controls-light, $color-controls-dark);
         border-radius: calculateRem(10px);
-        width: calculateRem(40px);
-        height: calculateRem(40px);
+        width: $button-width;
+        height: $button-width;
+    }
+}
+
+@include responsive('tablet') {
+    :host {
+        .btn {
+            width: calculateRem(40px);
+            height: calculateRem(40px);
+        }
+        .pause {
+            width: calculateRem(40px);
+            height: calculateRem(40px);
+        }
     }
 }
 
