@@ -3,6 +3,7 @@ import { ScoreComponent } from "./components/score/score.component";
 import { BoardComponent } from "./components/board/board.component";
 import { ControlsComponent } from "./components/controls/controls.component";
 import { GameService } from './services/game.service';
+import { AudioService } from './services/audio.service';
 
 @Component({
   selector: 'app-root',
@@ -25,17 +26,31 @@ export class AppComponent {
   lives: number = 1;
   score: number = 0;
   highScore: number = 0;
+  allowVibration: boolean = false;
 
   constructor(
     private gameService: GameService,
+    private audioService: AudioService,
   ) {}
 
   ngOnInit() {
     this.highScore = this.gameService.getHighScore();
   }
 
+  // Enable vibration on first user interaction
+  @HostListener('window:touchstart', ['$event'])
+  @HostListener('window:keydown', ['$event'])
+  enableVibration() {
+    this.allowVibration = true;
+  }
+
   togglePause() {
     this.isPaused = !this.isPaused;
+    if (this.isPaused) {
+      this.audioService.pause();
+    } else {
+      this.audioService.resume();
+    }
   }
 
   @HostListener('window:keydown', ['$event'])

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Direction } from './enum/direction';
 import { GameService } from '../../services/game.service';
+import { AudioService } from '../../services/audio.service';
 
 @Component({
   selector: 'app-board',
@@ -33,6 +34,7 @@ export class BoardComponent implements OnInit {
     
   constructor(
     private gameService: GameService,
+    private audioService: AudioService,
   ) {}
 
   ngOnInit(): void {
@@ -63,11 +65,14 @@ export class BoardComponent implements OnInit {
     
   }
 
-  @HostListener('window:touchstart', ['$event'])
-  @HostListener('window:keydown', ['$event'])
-  enableVibration() {
-    this.allowVibration = true;
+  // Unlock audio on first user interaction
+  @HostListener('window:touchstart')
+  @HostListener('window:keydown')
+  unlockAudio() {
+    this.audioService.unlock();
   }
+
+  
 
   // Key event listener
   private handleKeyEvent = (event: KeyboardEvent) => {
@@ -133,6 +138,7 @@ export class BoardComponent implements OnInit {
     // Check collisions with walls
     if (newHeadIndex < 0 || newHeadIndex >= totalCells) {
       this.vibrate();
+      this.audioService.hit();
       this.gameOver();
       return;
     }
@@ -140,6 +146,7 @@ export class BoardComponent implements OnInit {
     // Check collisions with self
     if (this.snake.includes(newHeadIndex)) {
       this.vibrate();
+      this.audioService.hit();
       this.gameOver();
       return;
     }
@@ -149,6 +156,8 @@ export class BoardComponent implements OnInit {
     
     // eat new food
     if (newHeadIndex === this.food) {
+
+      this.audioService.eat();
       
       const bonus = this.difficulty;
 
@@ -254,8 +263,12 @@ export class BoardComponent implements OnInit {
     this.gameService.setHighScore(this.score);
 
     if (this.lives <= 1) {
-      alert("GAME OVER 🐍💥");
-      this.resetGame();
+      this.audioService.gameOver();
+      
+      setTimeout(() => {
+        alert("GAME OVER 🐍💥");
+        this.resetGame();
+      }, 150);
       return;
     } else {
       this.lives--;
