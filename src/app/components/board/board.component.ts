@@ -70,9 +70,11 @@ export class BoardComponent implements OnInit {
   @HostListener('window:keydown')
   unlockAudio() {
     this.audioService.unlock();
+    
+    if (this.audioService.isMusicPlaying()) {
+      this.audioService.startMusic(this.difficulty);
+    }
   }
-
-  
 
   // Key event listener
   private handleKeyEvent = (event: KeyboardEvent) => {
@@ -208,6 +210,10 @@ export class BoardComponent implements OnInit {
     if (this.snake_speed > 120) {
       this.snake_speed -= 20;
       this.restartGameLoop();
+
+      // speed music
+      this.audioService.stopMusic();
+      this.audioService.startMusic(this.difficulty);
     }
   }
 
@@ -262,18 +268,22 @@ export class BoardComponent implements OnInit {
     
     this.gameService.setHighScore(this.score);
 
-    if (this.lives <= 1) {
+    this.audioService.stopMusic();
+    
+    if (this.lives <= 1) {     
       this.audioService.gameOver();
-      
       setTimeout(() => {
         alert("GAME OVER 🐍💥");
         this.resetGame();
-      }, 150);
-      return;
+      }, 300);
     } else {
       this.lives--;
       this.livesChange.emit(this.lives);
       this.resetAfterCollisionSnake();
+
+      setTimeout(() => {
+        this.audioService.startMusic();
+      }, 400);
     }  
   }
 

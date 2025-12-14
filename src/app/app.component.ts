@@ -47,8 +47,10 @@ export class AppComponent {
   togglePause() {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
+      this.audioService.pauseMusic();
       this.audioService.pause();
     } else {
+      this.audioService.resumeMusic();
       this.audioService.resume();
     }
   }
