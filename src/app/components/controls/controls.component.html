@@ -23,5 +23,10 @@
     <i *ngIf="!isPaused" class="fa-solid fa-pause"></i>
     <i *ngIf="isPaused" class="fa-solid fa-play"></i>
   </button>
+
+  <button class="btn mute" (click)="toggleMute()">
+    <i *ngIf="!isMuted" class="fa-solid fa-volume-up"></i>
+    <i *ngIf="isMuted" class="fa-solid fa-volume-mute"></i>
+  </button>
 </div>
 

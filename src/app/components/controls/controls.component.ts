@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AudioService } from '../../services/audio.service';
 
 @Component({
   selector: 'app-controls',
@@ -13,6 +14,10 @@ export class ControlsComponent {
   @Output() pauseClicked = new EventEmitter<void>();
 
   @Input() isPaused: boolean = false;
+  
+  constructor(
+    private audioService: AudioService) 
+  { }
 
   emitDirection(dir: string) {
     this.direction.emit(dir);
@@ -20,6 +25,14 @@ export class ControlsComponent {
 
   emitPause() {
     this.pauseClicked.emit();
+  }
+
+  get isMuted(): boolean {
+    return this.audioService.isMuted();
+  }
+
+  toggleMute() {
+    this.audioService.toogleMute();
   }
 
 }

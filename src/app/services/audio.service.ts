@@ -7,10 +7,30 @@ export class AudioService {
 
   private audioContext!: AudioContext;
   private unlocked: boolean = false;
-  
   private musicOscillator!: OscillatorNode;
   private musicGainNode!: GainNode;
   private musicInterval: any = null;
+  private muted = false;
+
+  constructor() {
+    const stored = localStorage.getItem('sound-muted');
+    this.muted = stored === 'true';
+  }
+
+  // Mute or unmute all sounds
+  isMuted(): boolean {
+    return this.muted;
+  }
+
+  // Toggle mute state
+  toogleMute() {
+    this.muted = !this.muted;
+    localStorage.setItem('sound-muted', String(this.muted));
+
+    if (this.musicGainNode) {
+      this.musicGainNode.gain.value = this.muted ? 0 : 0.05;
+    }
+  }
 
   unlock() {
     if (this.unlocked) return; 
@@ -23,7 +43,7 @@ export class AudioService {
 
   // Core function to play a tone
   private playTone(frequency: number, duration: number, volume: number) {
-    if (!this.unlocked) return;
+    if (!this.unlocked || this.muted) return;
 
     const oscillator = this.audioContext.createOscillator();
     const gainNode = this.audioContext.createGain();
@@ -41,6 +61,18 @@ export class AudioService {
   
   // GameBoy music loop
   startMusic(level: number = 1) {
+
+    if (this.muted) return; 
+
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext();
+    }
+
+    this.musicGainNode = this.audioContext.createGain();
+    this.musicGainNode.gain.value = 0.05; // Low volume for background music
+
+    this.musicGainNode.connect(this.audioContext.destination)
+
     if (!this.unlocked || this.musicInterval) return;
 
     const notes = [
@@ -74,21 +106,25 @@ export class AudioService {
   }
 
   pauseMusic() {
+    if (this.muted) return;
     this.stopMusic();
   }
 
   resumeMusic() {
+    if (this.muted) return;
     this.startMusic();
   }
 
   // Simple beep sound for effects
   // Sound for eating food
   eat() {
+    if (this.muted) return;
     this.playTone(880, 80, 0.12);
   }
 
   // Sound for hitting wall or self
   hit() {
+    if (this.muted) return;
     this.playTone(220, 200, 0.2);
   }
 
@@ -101,11 +137,13 @@ export class AudioService {
 
   // Sound for pausing the game
   pause() {
+    if (this.muted) return;
     this.playTone(600, 80, 0.1);
   }
 
   // Sound for resuming the game
   resume() {
+    if (this.muted) return;
     this.playTone(900, 80, 0.1);
   }
 
