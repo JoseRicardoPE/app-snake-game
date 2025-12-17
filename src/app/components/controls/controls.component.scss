@@ -49,7 +49,14 @@ $button-width: calculateRem(44px);
         position: absolute;
         top: 0;
         right: 0;
-        background: linear-gradient(to bottom, $color-controls-light, $color-controls-dark);
+        border-radius: calculateRem(10px);
+        width: $button-width;
+        height: $button-width;
+    }
+    .mute {
+        position: absolute;
+        top: 0;
+        left: 0;
         border-radius: calculateRem(10px);
         width: $button-width;
         height: $button-width;
@@ -62,7 +69,7 @@ $button-width: calculateRem(44px);
             width: calculateRem(40px);
             height: calculateRem(40px);
         }
-        .pause {
+        .pause, .mute {
             width: calculateRem(40px);
             height: calculateRem(40px);
         }
