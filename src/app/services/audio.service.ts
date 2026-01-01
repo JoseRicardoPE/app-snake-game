@@ -23,12 +23,14 @@ export class AudioService {
   }
 
   // Toggle mute state
-  toogleMute() {
+  toggleMute() {
     this.muted = !this.muted;
     localStorage.setItem('sound-muted', String(this.muted));
 
-    if (this.musicGainNode) {
-      this.musicGainNode.gain.value = this.muted ? 0 : 0.05;
+    if (this.muted) {
+      this.stopMusic();
+    } else {
+      this.startMusic();
     }
   }
 

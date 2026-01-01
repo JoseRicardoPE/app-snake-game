@@ -32,7 +32,7 @@ export class ControlsComponent {
   }
 
   toggleMute() {
-    this.audioService.toogleMute();
+    this.audioService.toggleMute();
   }
 
 }

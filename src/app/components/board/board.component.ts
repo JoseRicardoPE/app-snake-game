@@ -43,6 +43,7 @@ export class BoardComponent implements OnInit {
     this.placeFood();
     window.addEventListener('keydown', this.handleKeyEvent);
     this.startGameLoop();
+    this.audioService.startMusic(this.difficulty);
   }
 
   ngOnDestroy(): void {
@@ -57,10 +58,18 @@ export class BoardComponent implements OnInit {
     
     if (changes['isPaused']) {
       if (this.isPaused) {
+        this.audioService.pauseMusic();
+        this.audioService.pause();
         console.log('En pause');
       } else {
+        this.audioService.resumeMusic();
+        this.audioService.resume();
         console.log('Reanudado');
       }
+    }
+
+    if (changes['externalDirection'] && this.externalDirection) {
+      this.handleDirection(this.externalDirection);
     }
     
   }
@@ -267,24 +276,20 @@ export class BoardComponent implements OnInit {
   gameOver() {
     
     this.gameService.setHighScore(this.score);
-
     this.audioService.stopMusic();
+    this.audioService.gameOver();
     
     if (this.lives <= 1) {     
-      this.audioService.gameOver();
       setTimeout(() => {
         alert("GAME OVER 🐍💥");
         this.resetGame();
-      }, 300);
-    } else {
-      this.lives--;
-      this.livesChange.emit(this.lives);
-      this.resetAfterCollisionSnake();
-
-      setTimeout(() => {
-        this.audioService.startMusic();
-      }, 400);
-    }  
+        this.audioService.startMusic(this.difficulty);
+      }, 150);
+      return;
+    } 
+    this.lives--;
+    this.livesChange.emit(this.lives);
+    this.resetAfterCollisionSnake();
   }
 
   // Initialize the board grid
