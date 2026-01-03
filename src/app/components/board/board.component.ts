@@ -80,10 +80,6 @@ export class BoardComponent implements OnInit {
   @HostListener('window:keydown')
   unlockAudio() {
     this.audioService.unlock();
-    
-    if (this.audioService.isMusicPlaying()) {
-      this.audioService.startMusic(this.difficulty);
-    }
   }
 
   // Key event listener
@@ -96,7 +92,7 @@ export class BoardComponent implements OnInit {
     if (this.gameInterval) return;
 
     this.gameInterval = setInterval(() => {
-      if (!this.isPaused) {
+      if (!this.isPaused || this.isGameOver) return; {
         this.moveSnake();
       }
     }, this.snake_speed);
@@ -238,6 +234,9 @@ export class BoardComponent implements OnInit {
 
   // Reset the entire game
   resetGame() {
+    this.isGameOver = false;
+    this.audioService.startMusic(this.difficulty);
+
     this.lives = 1;
     this.livesChange.emit(this.lives);
 
@@ -257,7 +256,6 @@ export class BoardComponent implements OnInit {
     this.placeFood();
 
     this.startGameLoop();
-    
   }
 
   // Reset the snake and food after a collision but without restarting the whole game
@@ -275,26 +273,39 @@ export class BoardComponent implements OnInit {
 
   // Handle game over scenario and life management
   gameOver() {
+    if (this.isGameOver) return;
+
+    this.isGameOver = true;
+
+    clearInterval(this.gameInterval);
+    this.gameInterval = null;
+
     this.gameService.setHighScore(this.score);
     
     this.audioService.stopMusic();
     this.audioService.gameOver();
     
-    if (this.lives <= 1) {     
-      this.isGameOver = true;
-      this.vibrate();
-      return;
-    }
-
-    this.lives--;
-    this.livesChange.emit(this.lives);
-    this.resetAfterCollisionSnake();
+    this.vibrate();
   }
 
   restartFromGameOver() {
     this.isGameOver = false;
+
+    this.lives = 1;
+    this.score = 0;
+
+    this.livesChange.emit(this.lives);
+    this.scoreChange.emit(this.score);
+
+    this.snake_speed = this.BASE_SPEED;
+    this.direction = Direction.Right;
+
+    this.initBoard();
+    this.placeInitialSnake();
+    this.placeFood();
+
     this.audioService.startMusic(this.difficulty);
-    this.resetGame();
+    this.startGameLoop();
   }
 
   // Initialize the board grid
