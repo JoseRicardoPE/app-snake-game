@@ -31,9 +31,10 @@ export class BoardComponent implements OnInit {
   snake_speed: number = 600;
   level_speed: number = 1;
   allowVibration: boolean = false;
+  isGameOver: boolean = false;
     
   constructor(
-    private gameService: GameService,
+    public gameService: GameService,
     private audioService: AudioService,
   ) {}
 
@@ -274,22 +275,26 @@ export class BoardComponent implements OnInit {
 
   // Handle game over scenario and life management
   gameOver() {
-    
     this.gameService.setHighScore(this.score);
+    
     this.audioService.stopMusic();
     this.audioService.gameOver();
     
     if (this.lives <= 1) {     
-      setTimeout(() => {
-        alert("GAME OVER 🐍💥");
-        this.resetGame();
-        this.audioService.startMusic(this.difficulty);
-      }, 150);
+      this.isGameOver = true;
+      this.vibrate();
       return;
-    } 
+    }
+
     this.lives--;
     this.livesChange.emit(this.lives);
     this.resetAfterCollisionSnake();
+  }
+
+  restartFromGameOver() {
+    this.isGameOver = false;
+    this.audioService.startMusic(this.difficulty);
+    this.resetGame();
   }
 
   // Initialize the board grid

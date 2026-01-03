@@ -5,6 +5,10 @@
 :host {
     display: block;
     width: 100%;
+    .board-wrapper {
+        position: relative;
+    }
+
     .board {
         display: grid;
         grid-template-columns: repeat(10, auto);
@@ -20,6 +24,11 @@
         border-radius: $radius-md;
         box-shadow: $shadow-inset-soft;
     }
+    
+    .board.blur {
+        filter: blur(#{calculateRem(2px)}) brightness(0.7);
+    }
+    
     .board-grid {
         width: 100%;
         height: 100%;
@@ -31,7 +40,7 @@
     /* Snake body */
     .snake-body {
         position: relative;
-        box-shadow: inset 0 -2px 2px rgba(0,0,0,0.15);
+        box-shadow: inset 0 calculateRem(-2px) calculateRem(2px) rgba(0,0,0,0.15);
     }
 
     .snake-level-1 {
@@ -93,7 +102,6 @@
             background-color: #004ecb;
         }
     }
-    
 
     /* Snake head */
     .snake-head {
@@ -124,12 +132,6 @@
         }
     }
 
-    /* Snake tail */
-    // .snake-tail {
-    //     background-color: darken($color-snake-body, 10%);
-    //     box-shadow: inset 0 2px 2px rgba(0,0,0,0.15);
-    // }
-
     /* Food */
     .food {
         background-color: $color-food;
@@ -137,4 +139,51 @@
         border-radius: 50%;
         transform: scale(0.9);
     }
+
+    .game-over-overlay {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        inset: 0;
+        background: rgba(15, 56, 15, 0.9);
+        z-index: 10;
+    }
+
+    .game-over-box {
+        background-color: #9bbc0f;
+        border: calculateRem(4px) solid #0f380f;
+        padding: calculateRem(20px) calculateRem(24px);
+        text-align: center;
+        box-shadow: $shadow-inset-soft;
+        & .score, .high-score {
+            @include font-size($font-size-sm);
+        }
+    }
+
+    .game-over-title {
+        @include font-size($font-size);
+        margin-bottom: calculateRem(12px);
+        font-weight: $font-weight-medium;
+        font-family: inherit;
+    }
+
+    .game-over-button {
+        padding: calculateRem(8px) calculateRem(14px);
+        margin-top: calculateRem(14px);
+        background-color: #0f380f;
+        color: #9bbc0f;
+        border: calculateRem(2px) solid #306230;
+        font-family: inherit;
+        cursor: pointer;
+        .game-over-restart {
+            display: flex;  
+            gap: calculateRem(6px)  ;
+        } 
+    }
+
+    .game-over-button:hover {
+        background-color: #306230;
+    }
+
 }

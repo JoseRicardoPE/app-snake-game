@@ -1,19 +1,38 @@
-<div class="board">
-    <ng-container *ngFor="let cell of cells; let i = index">
-        <div class="board-grid"
-            [ngClass]="
-            {
-                'snake-head': isSnakeHead(i),
-                'snake-head-up': isSnakeHead(i) && direction === Direction.Up,
-                'snake-head-down': isSnakeHead(i) && direction === Direction.Down,
-                'snake-head-left': isSnakeHead(i) && direction === Direction.Left,
-                'snake-head-right': isSnakeHead(i) && direction === Direction.Right,
-                'snake-body': isSnakeCell(i),
-                'snake-tail': isSnakeTail(i),
-                'food': isFoodCell(i)
-            }"
-            [class]="isSnakeCell(i) ? getColorSnake : ''"
-        >
-        </div>
-    </ng-container>
+<div class="board-wrapper">
+    
+    <!-- Board component for the Snake game -->
+    <div class="board" [class.blur]="isGameOver">
+        <ng-container *ngFor="let cell of cells; let i = index">
+            <div class="board-grid"
+                [ngClass]="
+                {
+                    'snake-head': isSnakeHead(i),
+                    'snake-head-up': isSnakeHead(i) && direction === Direction.Up,
+                    'snake-head-down': isSnakeHead(i) && direction === Direction.Down,
+                    'snake-head-left': isSnakeHead(i) && direction === Direction.Left,
+                    'snake-head-right': isSnakeHead(i) && direction === Direction.Right,
+                    'snake-body': isSnakeCell(i),
+                    'snake-tail': isSnakeTail(i),
+                    'food': isFoodCell(i)
+                }"
+                [class]="isSnakeCell(i) ? getColorSnake : ''"
+            >
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Game-over Overlay -->
+     <ng-container *ngIf="isGameOver">
+         <div class="game-over-overlay">
+             <div class="game-over-box">
+                 <h1 class="game-over-title">!GAME OVER¡</h1>
+                 <p class="score">SCORE {{ score }}</p>
+                 <p class="high-score">HIGH SCORE {{ gameService.getHighScore() }}</p>
+     
+                 <button class="game-over-button" (click)="restartFromGameOver()">
+                     <i class="game-over-restart fa-solid fa-play">RESTART</i>
+                 </button>
+             </div>
+         </div>
+     </ng-container>
 </div>
