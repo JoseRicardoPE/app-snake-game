@@ -8,6 +8,7 @@
         #boardRef    
         [externalDirection]="externalDirection"
         [isPaused]="isPaused"
+        (gameOverChange)="isGameOver = $event"
         (livesChange)="updateLives($event)"
         (scoreChange)="updateScore($event)"
     ></app-board>
@@ -15,5 +16,6 @@
         (direction)="externalDirection = $event"
         (pauseClicked)="togglePause()"
         [isPaused]="isPaused"
+        [isGameOver]="isGameOver"
     ></app-controls>
 </div>

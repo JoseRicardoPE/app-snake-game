@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { ScoreComponent } from "./components/score/score.component";
 import { BoardComponent } from "./components/board/board.component";
 import { ControlsComponent } from "./components/controls/controls.component";
@@ -27,6 +27,7 @@ export class AppComponent {
   score: number = 0;
   highScore: number = 0;
   allowVibration: boolean = false;
+  isGameOver: boolean = false;
 
   constructor(
     private gameService: GameService,
@@ -45,7 +46,10 @@ export class AppComponent {
   }
 
   togglePause() {
+    if (this.isGameOver) return;
+
     this.isPaused = !this.isPaused;
+    
     if (this.isPaused) {
       this.audioService.pauseMusic();
       this.audioService.pause();

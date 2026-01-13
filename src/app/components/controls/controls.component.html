@@ -19,7 +19,7 @@
     </button>
   </div>
 
-  <button class="btn pause" (click)="emitPause()">
+  <button class="btn pause" (click)="emitPause()" [disabled]="isGameOver">
     <i *ngIf="!isPaused" class="fa-solid fa-pause"></i>
     <i *ngIf="isPaused" class="fa-solid fa-play"></i>
   </button>

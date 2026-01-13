@@ -16,6 +16,7 @@ export class BoardComponent implements OnInit {
   @Input() externalDirection: string | null = null;
   @Output() livesChange = new EventEmitter<number>();
   @Output() scoreChange = new EventEmitter<number>();
+  @Output() gameOverChange = new EventEmitter<boolean>();
 
   private readonly BASE_SPEED: number = 600;
 
@@ -285,11 +286,14 @@ export class BoardComponent implements OnInit {
     this.audioService.stopMusic();
     this.audioService.gameOver();
     
+    this.gameOverChange.emit(true)
+
     this.vibrate();
   }
 
   restartFromGameOver() {
     this.isGameOver = false;
+    this.gameOverChange.emit(false);
 
     this.lives = 1;
     this.score = 0;

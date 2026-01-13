@@ -14,6 +14,7 @@ export class ControlsComponent {
   @Output() pauseClicked = new EventEmitter<void>();
 
   @Input() isPaused: boolean = false;
+  @Input() isGameOver: boolean = false;
   
   constructor(
     private audioService: AudioService) 
