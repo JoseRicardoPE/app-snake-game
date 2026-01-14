@@ -24,7 +24,7 @@
     <i *ngIf="isPaused" class="fa-solid fa-pause"></i>
   </button>
 
-  <button class="btn mute" (click)="toggleMute()">
+  <button class="btn mute" (click)="toggleMute()" [disabled]="isGameOver">
     <i *ngIf="!isMuted" class="fa-solid fa-volume-up"></i>
     <i *ngIf="isMuted" class="fa-solid fa-volume-mute"></i>
   </button>

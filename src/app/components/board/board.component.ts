@@ -33,6 +33,9 @@ export class BoardComponent implements OnInit {
   level_speed: number = 1;
   allowVibration: boolean = false;
   isGameOver: boolean = false;
+  isGameStarted: boolean = false;
+
+  gameState: 'start' | 'playing' | 'paused' | 'gameover' = 'start';
     
   constructor(
     public gameService: GameService,
@@ -44,8 +47,7 @@ export class BoardComponent implements OnInit {
     this.placeInitialSnake();
     this.placeFood();
     window.addEventListener('keydown', this.handleKeyEvent);
-    this.startGameLoop();
-    this.audioService.startMusic(this.difficulty);
+
   }
 
   ngOnDestroy(): void {
@@ -88,12 +90,23 @@ export class BoardComponent implements OnInit {
     this.handleDirection(event.key);
   }
 
+  startGame() {
+    if (this.gameState !== 'start') return;
+
+    this.gameState = 'playing';
+    this.isGameStarted = true;
+    this.isGameOver = false;
+
+    this.audioService.startMusic(this.difficulty);
+    this.startGameLoop();
+  }
+
   // Start the main game loop
   startGameLoop() {
     if (this.gameInterval) return;
 
     this.gameInterval = setInterval(() => {
-      if (!this.isPaused || this.isGameOver) return; {
+      if (this.gameState !== 'playing') return; {
         this.moveSnake();
       }
     }, this.snake_speed);
@@ -259,23 +272,11 @@ export class BoardComponent implements OnInit {
     this.startGameLoop();
   }
 
-  // Reset the snake and food after a collision but without restarting the whole game
-  private resetAfterCollisionSnake() {
-    const head = this.snake[0];
-
-    this.direction = Direction.Right;
-    
-    const length = this.snake.length;
-
-    this.snake = Array.from({ length }, (_, i) => head - i);
-
-    this.placeFood();
-  }
-
   // Handle game over scenario and life management
   gameOver() {
-    if (this.isGameOver) return;
+    if (this.gameState === 'gameover') return;
 
+    this.gameState = 'gameover';
     this.isGameOver = true;
 
     clearInterval(this.gameInterval);
@@ -292,24 +293,26 @@ export class BoardComponent implements OnInit {
   }
 
   restartFromGameOver() {
-    this.isGameOver = false;
+    this.gameState = 'start';
     this.gameOverChange.emit(false);
 
-    this.lives = 1;
-    this.score = 0;
+    this.isGameStarted = false;
+    this.isGameOver = false;
 
+    this.lives = 1;
     this.livesChange.emit(this.lives);
+    
+    this.score = 0;
     this.scoreChange.emit(this.score);
 
     this.snake_speed = this.BASE_SPEED;
     this.direction = Direction.Right;
 
+    this.audioService.stopMusic();
+    
     this.initBoard();
     this.placeInitialSnake();
     this.placeFood();
-
-    this.audioService.startMusic(this.difficulty);
-    this.startGameLoop();
   }
 
   // Initialize the board grid
@@ -361,6 +364,13 @@ export class BoardComponent implements OnInit {
   }
   isFoodCell(index: number): boolean {
     return this.food === index;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleStart(event: KeyboardEvent) {
+    if (event.code === 'Space' && this.gameState === 'start') {
+      this.startGame();
+    }
   }
   
 }

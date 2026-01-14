@@ -8,6 +8,41 @@
     .board-wrapper {
         position: relative;
     }
+    
+    .overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        inset: 0;
+        background-color: rgba(15, 30, 15, 1);
+        z-index: 20;
+        color: #9bbc0f;
+        font-family: inherit;
+    }
+
+    .start-screen {
+        .title {
+            @include font-size($font-size-xxl);
+            margin-bottom: calculateRem(12px);
+            font-family: inherit;
+        }
+        .subtitle {
+            @include font-size($font-size-sm);
+            margin-bottom: calculateRem(20px);
+            font-family: inherit;
+        }
+    }
+
+    .blink {
+        animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+        0%, 50%, 100% { opacity: 1; }
+        25%, 75% { opacity: 0; }
+    }
 
     .board {
         display: grid;

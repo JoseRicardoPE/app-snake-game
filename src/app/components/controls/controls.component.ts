@@ -33,6 +33,7 @@ export class ControlsComponent {
   }
 
   toggleMute() {
+    if (this.isGameOver) return;
     this.audioService.toggleMute();
   }
 

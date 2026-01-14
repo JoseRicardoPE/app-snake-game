@@ -1,5 +1,14 @@
 <div class="board-wrapper">
-    
+
+    <!-- Start screen -->
+    <ng-container *ngIf="!isGameStarted">
+        <div class="overlay start-screen">
+            <h1 class="title">SNAKE GAME</h1>
+            <p class="subtitle">Game Boy Edition</p>
+            <p class="blink">Press Start</p>
+        </div>
+    </ng-container>
+
     <!-- Board component for the Snake game -->
     <div class="board" [class.blur]="isGameOver">
         <ng-container *ngFor="let cell of cells; let i = index">
