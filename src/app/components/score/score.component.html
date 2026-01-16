@@ -1,14 +1,16 @@
-<div class="score-panel">
-    <div class="score-item">
-        <span class="label label--points">Points</span>
-        <span class="value value--points">{{ score }}</span>
+<ng-container *ngIf="snapshot">
+    <div class="score-panel">
+        <div class="score-item">
+            <span class="label label--points">Points</span>
+            <span class="value value--points">{{ snapshot.score }}</span>
+        </div>
+        <div class="score-item">
+            <span class="label label--lives">Lives</span>
+            <span class="value value--lives">1</span>
+        </div>
+        <div class="score-item">
+            <span class="label label--score">Score</span>
+            <span class="value value--score">{{ snapshot.highScore }}</span>
+        </div>
     </div>
-    <div class="score-item">
-        <span class="label label--lives">Lives</span>
-        <span class="value value--lives">{{ lives }}</span>
-    </div>
-    <div class="score-item">
-        <span class="label label--score">Score</span>
-        <span class="value value--score">{{ highScore }}</span>
-    </div>
-</div>
+</ng-container>

@@ -15,13 +15,6 @@ import { Subscription } from 'rxjs';
 })
 export class BoardComponent implements OnInit {
 
-  @Input() isPaused: boolean = false;
-  @Input() externalDirection: string | null = null;
-  @Output() livesChange = new EventEmitter<number>();
-  @Output() scoreChange = new EventEmitter<number>();
-  @Output() gameOverChange = new EventEmitter<boolean>();
-  @Output() gameStarted = new EventEmitter<void>();
-
   private sub!: Subscription;
   readonly gridSize: number = 10;
 
@@ -30,17 +23,6 @@ export class BoardComponent implements OnInit {
   snapshot!: GameSnapshot;
   gameState = GameState;
   direction = Direction;
-
-  snake: number[] = [];
-  food = 0;
-  gameInterval: any;
-  lives: number = 1;
-  score: number = 0;
-  snake_speed: number = 600;
-  level_speed: number = 1;
-  allowVibration: boolean = false;
-  isStartScreen: boolean = false;
-  
     
   constructor(
     public gameService: GameService,
