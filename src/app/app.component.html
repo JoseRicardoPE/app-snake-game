@@ -1,21 +1,11 @@
 <div class="game-container">
     <app-score
-        [lives]="lives"
-        [score]="score"
-        [highScore]="highScore"
+        
     ></app-score>
     <app-board
-        #boardRef    
-        [externalDirection]="externalDirection"
-        [isPaused]="isPaused"
-        (gameOverChange)="isGameOver = $event"
-        (livesChange)="updateLives($event)"
-        (scoreChange)="updateScore($event)"
+        
     ></app-board>
     <app-controls
-        (direction)="externalDirection = $event"
-        (pauseClicked)="togglePause()"
-        [isPaused]="isPaused"
-        [isGameOver]="isGameOver"
+        
     ></app-controls>
 </div>

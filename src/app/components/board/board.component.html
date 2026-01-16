@@ -1,8 +1,8 @@
 <div class="board-wrapper">
 
     <!-- Start screen -->
-    <ng-container *ngIf="!isGameStarted">
-        <div class="overlay start-screen">
+    <ng-container *ngIf="isStart">
+        <div class="overlay start-screen" (click)="startGame()">
             <h1 class="title">SNAKE GAME</h1>
             <p class="subtitle">Game Boy Edition</p>
             <p class="blink">Press Start</p>
@@ -16,15 +16,11 @@
                 [ngClass]="
                 {
                     'snake-head': isSnakeHead(i),
-                    'snake-head-up': isSnakeHead(i) && direction === Direction.Up,
-                    'snake-head-down': isSnakeHead(i) && direction === Direction.Down,
-                    'snake-head-left': isSnakeHead(i) && direction === Direction.Left,
-                    'snake-head-right': isSnakeHead(i) && direction === Direction.Right,
-                    'snake-body': isSnakeCell(i),
+                    'snake-body': isSnakeBody(i),
                     'snake-tail': isSnakeTail(i),
-                    'food': isFoodCell(i)
+                    'food': isFood(i)
                 }"
-                [class]="isSnakeCell(i) ? getColorSnake : ''"
+                [class]="isSnakeBody(i) ? snakeColorClass() : ''"
             >
             </div>
         </ng-container>
@@ -35,10 +31,9 @@
          <div class="game-over-overlay">
              <div class="game-over-box">
                  <h1 class="game-over-title">!GAME OVER¡</h1>
-                 <p class="score">SCORE {{ score }}</p>
-                 <p class="high-score">HIGH SCORE {{ gameService.getHighScore() }}</p>
-     
-                 <button class="game-over-button" (click)="restartFromGameOver()">
+                 <p class="score">SCORE {{ snapshot.score }}</p>
+                 <p class="high-score">HIGH SCORE {{ snapshot.highScore }}</p>     
+                 <button class="game-over-button" (click)="restart()">
                      <i class="game-over-restart fa-solid fa-play">START</i>
                  </button>
              </div>
