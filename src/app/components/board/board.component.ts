@@ -165,4 +165,20 @@ export class BoardComponent implements OnInit {
     return this.snapshot.state === GameState.Paused;
   }
 
+  getCellClasses(i: number): { [key: string]: boolean} {
+    const isHead = this.isSnakeHead(i);
+
+    return {
+      'snake-head': isHead,
+      'snake-body': this.isSnakeBody(i),
+      'snake-tail': this.isSnakeTail(i),
+      'food': this.isFood(i),
+      'snake-head-up': isHead && this.snapshot.direction === Direction.Up,
+      'snake-head-down': isHead && this.snapshot.direction === Direction.Down,
+      'snake-head-left': isHead && this.snapshot.direction === Direction.Left,
+      'snake-head-right': isHead && this.snapshot.direction === Direction.Right,
+    }
+    
+  }
+
 }

@@ -13,13 +13,7 @@
     <div class="board" [class.blur]="isGameOver">
         <ng-container *ngFor="let cell of cells; let i = index">
             <div class="board-grid"
-                [ngClass]="
-                {
-                    'snake-head': isSnakeHead(i),
-                    'snake-body': isSnakeBody(i),
-                    'snake-tail': isSnakeTail(i),
-                    'food': isFood(i)
-                }"
+                [ngClass]="getCellClasses(i)"
                 [class]="isSnakeBody(i) ? snakeColorClass() : ''"
             >
             </div>
