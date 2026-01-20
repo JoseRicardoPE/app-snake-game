@@ -19,8 +19,6 @@ export class ControlsComponent {
   snapshot!: GameSnapshot;
   gameState = GameState;
   direction = Direction;
-
-  isMuted: boolean = false;
   
   constructor(
     private gameService: GameService,
@@ -66,7 +64,7 @@ export class ControlsComponent {
   }
   
   toggleMute(): void {
-    this.audioService.toggleMute();
+    this.audioService.setMuted(!this.audioService.isMuted());
   }
 
   restart(): void {
@@ -85,5 +83,9 @@ export class ControlsComponent {
 
   get isGameOver(): boolean {
     return this.snapshot.state === this.gameState.GameOver;
+  }
+
+  get isMuted(): boolean {
+    return this.audioService.isMuted();
   }
 }
