@@ -7,10 +7,9 @@ export class AudioService {
 
   private audioContext!: AudioContext;
   private unlocked: boolean = false;
-  private musicOscillator!: OscillatorNode;
-  private musicGainNode!: GainNode;
   private musicInterval: any = null;
   private muted = false;
+  private musicEnabled = false;
 
   constructor() {
     const stored = localStorage.getItem('sound-muted');
@@ -22,23 +21,26 @@ export class AudioService {
     return this.muted;
   }
 
-  // Toggle mute state
-  toggleMute() {
-    this.muted = !this.muted;
+  setMuted(value: boolean): void {
+    this.muted = value;
     localStorage.setItem('sound-muted', String(this.muted));
 
     if (this.muted) {
-      this.stopMusic();
-    } else {
-      this.startMusic();
+      this.pauseMusic();
+    } else if (this.musicEnabled) {
+      this.resumeMusic();
     }
   }
 
-  unlock() {
-    if (this.unlocked) return; 
+  unlock(): void {
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext();
+    }
 
-    this.audioContext = new AudioContext();
-    this.audioContext.resume();
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+
     this.unlocked = true;
     console.log('Audio unlocked');
   }
@@ -62,20 +64,14 @@ export class AudioService {
   }
   
   // GameBoy music loop
-  startMusic(level: number = 1) {
+  startMusic(level: number = 1): void {
+    this.musicEnabled = true;
 
-    if (this.muted) return; 
+    if (this.muted || !this.unlocked || this.musicInterval) return; 
 
-    if (!this.audioContext) {
-      this.audioContext = new AudioContext();
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
     }
-
-    this.musicGainNode = this.audioContext.createGain();
-    this.musicGainNode.gain.value = 0.05; // Low volume for background music
-
-    this.musicGainNode.connect(this.audioContext.destination)
-
-    if (!this.unlocked || this.musicInterval) return;
 
     const notes = [
       523, 659, 784, 659,   // C5 E5 G5 E5
@@ -84,7 +80,6 @@ export class AudioService {
     ];
 
     const tempo = Math.max(180, 280 - level * 10); // Increase speed with level
-
     let index = 0;
 
     this.musicInterval = setInterval(() => {
@@ -96,25 +91,29 @@ export class AudioService {
     }, tempo);
   }
 
-  isMusicPlaying(): boolean {
-    return this.musicInterval !== null;
-  }
+  // isMusicPlaying(): boolean {
+  //   return this.musicInterval !== null;
+  // }
 
-  stopMusic() {
+  stopMusic(): void {
     if (this.musicInterval) {
       clearInterval(this.musicInterval);
       this.musicInterval = null;
     }
   }
 
-  pauseMusic() {
-    if (this.muted) return;
+  pauseMusic(): void {
+    // if (this.muted) return;
     this.stopMusic();
   }
 
-  resumeMusic() {
-    if (this.muted) return;
-    this.startMusic();
+  resumeMusic(level: number = 1): void {
+    if (this.muted || !this.unlocked || this.musicInterval) return;
+    
+    if (this.musicEnabled) {
+      this.startMusic(level);
+    }
+
   }
 
   // Simple beep sound for effects
@@ -125,26 +124,26 @@ export class AudioService {
   }
 
   // Sound for hitting wall or self
-  hit() {
+  hit(): void {
     if (this.muted) return;
     this.playTone(220, 200, 0.2);
   }
 
   // Sound for game over
-  gameOver() {
+  gameOver(): void {
     this.playTone(440, 200, 0.2);
     setTimeout(() => this.playTone(330, 200, 0.2), 200);
     setTimeout(() => this.playTone(220, 400, 0.2), 400);
   }
 
   // Sound for pausing the game
-  pause() {
+  pause(): void {
     if (this.muted) return;
     this.playTone(600, 80, 0.1);
   }
 
   // Sound for resuming the game
-  resume() {
+  resume(): void {
     if (this.muted) return;
     this.playTone(900, 80, 0.1);
   }
