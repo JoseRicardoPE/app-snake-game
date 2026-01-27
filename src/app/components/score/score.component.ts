@@ -19,9 +19,7 @@ export class ScoreComponent implements OnInit, OnDestroy {
   ) {}
   
   ngOnInit() {
-    this.sub = this.gameService.snapshot$.subscribe(s => {
-      this.snapshot = s;
-    })
+    this.sub = this.gameService.snapshot$.subscribe(s => this.snapshot = s);
   }
 
   ngOnDestroy(): void {

@@ -2,7 +2,7 @@
 
     <!-- Start screen -->
     <ng-container *ngIf="isStart">
-        <div class="overlay start-screen" (click)="startGame()">
+        <div class="overlay start-screen" (click)="start.emit()">
             <h1 class="title">SNAKE GAME</h1>
             <p class="subtitle">Game Boy Edition</p>
             <p class="blink">Press Start</p>
@@ -10,15 +10,17 @@
     </ng-container>
 
     <!-- Board component for the Snake game -->
-    <div class="board" [class.blur]="isGameOver">
-        <ng-container *ngFor="let cell of cells; let i = index">
-            <div class="board-grid"
-                [ngClass]="getCellClasses(i)"
-                [class]="isSnakeBody(i) ? snakeColorClass() : ''"
-            >
-            </div>
-        </ng-container>
-    </div>
+    <ng-container *ngIf="snapshot">
+        <div class="board" [class.blur]="isGameOver">
+            <ng-container *ngFor="let cell of cells; let i = index">
+                <div class="board-grid"
+                    [ngClass]="getCellClasses(i)"
+                    [class]="isSnakeBody(i) ? snakeColorClass() : ''"
+                >
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
 
     <!-- Game-over Overlay -->
      <ng-container *ngIf="isGameOver">
@@ -27,7 +29,7 @@
                  <h1 class="game-over-title">!GAME OVER¡</h1>
                  <p class="score">SCORE {{ snapshot.score }}</p>
                  <p class="high-score">HIGH SCORE {{ snapshot.highScore }}</p>     
-                 <button class="game-over-button" (click)="restart()">
+                 <button class="game-over-button" (click)="restart.emit()">
                      <i class="game-over-restart fa-solid fa-play">START</i>
                  </button>
              </div>

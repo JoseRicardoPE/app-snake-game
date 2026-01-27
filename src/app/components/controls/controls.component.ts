@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GameSnapshot } from '../../services/models/game-snapshot';
 import { GameState } from '../board/enum/game-state';
@@ -26,9 +26,7 @@ export class ControlsComponent {
   ) {}
 
   ngOnInit(): void {
-    this.sub = this.gameService.snapshot$.subscribe(s => {
-      this.snapshot = s;
-    })
+    this.sub = this.gameService.snapshot$.subscribe(s => this.snapshot = s);
   }
 
   ngOnDestroy(): void {
@@ -72,7 +70,6 @@ export class ControlsComponent {
     this.gameService.reset();
   }
 
-
   /* ======================
     UI helpers
     ====================== */
@@ -87,5 +84,10 @@ export class ControlsComponent {
 
   get isMuted(): boolean {
     return this.audioService.isMuted();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handlekey(e: KeyboardEvent) {
+    if (e.code === 'Space') this.togglePlayPause();
   }
 }

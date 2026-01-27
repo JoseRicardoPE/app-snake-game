@@ -145,7 +145,7 @@ export class GameService {
   private resetState() {
     const center = Math.floor(this.GRID_SIZE / 2) * this.GRID_SIZE + 2;
     this.state = {
-      state: GameState.Start,
+      ...this.state,
       direction: Direction.Right,
       snake: [center, center - 1],
       food: this.randomCell(),
