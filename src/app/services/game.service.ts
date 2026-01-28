@@ -77,6 +77,7 @@ export class GameService {
 
     if (direction !== opposite[this.state.direction]) {
       this.state.direction = direction;
+      this.emit();
     }
   }
 

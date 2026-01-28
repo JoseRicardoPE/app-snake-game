@@ -87,7 +87,25 @@ export class ControlsComponent {
   }
 
   @HostListener('window:keydown', ['$event'])
-  handlekey(e: KeyboardEvent) {
-    if (e.code === 'Space') this.togglePlayPause();
+  handlekey(event: KeyboardEvent) {
+    if (!this.snapshot || this.snapshot.state !== this.gameState.Playing) return;
+
+    switch (event.code) {
+      case 'ArrowUp':
+        this.move(this.direction.Up);
+        break;
+      case 'ArrowDown':
+        this.move(this.direction.Down);
+        break;
+      case 'ArrowLeft':
+        this.move(this.direction.Left);
+        break;
+      case 'ArrowRight':
+        this.move(this.direction.Right);
+        break;
+      case 'Space':
+        this.togglePlayPause();
+        break;
+    }
   }
 }
