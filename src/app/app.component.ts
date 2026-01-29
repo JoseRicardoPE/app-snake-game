@@ -19,6 +19,7 @@ export class AppComponent {
   private sub!: Subscription;
   gameState = GameState;
   private lastState: GameState | null = null;
+  private lastLevel = 1;
     
   constructor(
     private audioService: AudioService,
@@ -28,6 +29,11 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.sub = this.gameService.snapshot$.subscribe(s => {
+      const level = this.getLevel(s.score);
+      if (level !== this.lastLevel && s.state === this.gameState.Playing) {
+        this.audioService.setMusicLevel(level);
+        this.lastLevel = level;
+      }
       if (s.state === this.gameState.GameOver && this.lastState !== this.gameState.GameOver) {
         this.audioService.stopMusic();
         this.audioService.gameOver();
@@ -49,5 +55,12 @@ export class AppComponent {
   onRestart() {
     this.audioService.stopMusic();
     this.gameService.reset();
+  }
+  private getLevel(score: number): number {
+    if (score < 5) return 1;
+    if (score < 10) return 2;
+    if (score < 20) return 3;
+    if (score < 30) return 4;
+    return 5;
   }
 }

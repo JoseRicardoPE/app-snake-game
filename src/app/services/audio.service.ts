@@ -10,6 +10,7 @@ export class AudioService {
   private musicInterval: any = null;
   private muted = false;
   private musicEnabled = false;
+  private tempo = 280;
 
   constructor() {
     const stored = localStorage.getItem('sound-muted');
@@ -45,6 +46,14 @@ export class AudioService {
     console.log('Audio unlocked');
   }
 
+  setMusicLevel(level: number): void {
+    this.tempo = Math.max(180, 280 - level * 10);
+    if (this.musicInterval) {
+      this.stopMusic();
+      this.startMusicLoop();
+    }
+  }
+
   // Core function to play a tone
   private playTone(frequency: number, duration: number, volume: number) {
     if (!this.unlocked || this.muted) return;
@@ -64,14 +73,12 @@ export class AudioService {
   }
   
   // GameBoy music loop
-  startMusic(level: number = 1): void {
-    this.musicEnabled = true;
-
+  startMusicLoop(): void {
     if (this.muted || !this.unlocked || this.musicInterval) return; 
 
-    if (this.audioContext.state === 'suspended') {
-      this.audioContext.resume();
-    }
+    // if (this.audioContext.state === 'suspended') {
+    //   this.audioContext.resume();
+    // }
 
     const notes = [
       523, 659, 784, 659,   // C5 E5 G5 E5
@@ -79,7 +86,6 @@ export class AudioService {
       784, 659, 523, 0,     // G5 E5 C5 (silencio)
     ];
 
-    const tempo = Math.max(180, 280 - level * 10); // Increase speed with level
     let index = 0;
 
     this.musicInterval = setInterval(() => {
@@ -88,12 +94,15 @@ export class AudioService {
         this.playTone(note, 140, 0.05);
       }
       index = (index + 1) % notes.length;
-    }, tempo);
+    }, this.tempo);
   }
 
-  // isMusicPlaying(): boolean {
-  //   return this.musicInterval !== null;
-  // }
+  startMusic(level: number = 1): void {
+    if (this.musicInterval) return;
+    this.tempo = Math.max(180, 280 - level * 10);
+    this.musicEnabled = true;
+    this.startMusicLoop();
+  }
 
   stopMusic(): void {
     if (this.musicInterval) {
