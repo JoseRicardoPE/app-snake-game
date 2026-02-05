@@ -66,6 +66,19 @@ export class GameService {
     this.emit();
   }
   
+  /**
+   * Restart the game directly (reset state + start playing).
+   * Used to start immediately from Game Over without showing Start screen.
+   */
+  restart(): void {
+    this.stopLoop();
+    this.resetState();
+
+    this.state.state === GameState.Playing;
+    this.emit();
+    this.startLoop();
+  }
+
   gameOver() {
     if (this.state.state === GameState.GameOver) return;
     this.state.state = GameState.GameOver;

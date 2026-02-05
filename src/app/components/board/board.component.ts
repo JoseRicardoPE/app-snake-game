@@ -16,6 +16,7 @@ export class BoardComponent implements OnInit {
 
   @Output() start = new EventEmitter<void>();
   @Output() restart = new EventEmitter<void>();
+  @Output() finish = new EventEmitter<void>();
 
   readonly gridSize: number = 10;
 
@@ -74,15 +75,15 @@ export class BoardComponent implements OnInit {
   }
 
   get isStart(): boolean {
-    return this.snapshot.state === GameState.Start;
+    return this.snapshot?.state === GameState.Start;
   }
 
   get isGameOver(): boolean {
-    return this.snapshot.state === GameState.GameOver;
+    return this.snapshot?.state === GameState.GameOver;
   }
 
   get isPause(): boolean {
-    return this.snapshot.state === GameState.Paused;
+    return this.snapshot?.state === GameState.Paused;
   }
 
   getCellClasses(i: number): { [key: string]: boolean} {

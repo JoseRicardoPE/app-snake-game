@@ -10,6 +10,7 @@ export class AudioService {
   private musicInterval: any = null;
   private muted = false;
   private musicEnabled = false;
+  private currentLevel: number = 1;
   private tempo = 280;
 
   constructor() {
@@ -46,7 +47,12 @@ export class AudioService {
     console.log('Audio unlocked');
   }
 
+   /**
+   * Set the music level and update tempo accordingly.
+   * Also restart the loop if music is running.
+   */
   setMusicLevel(level: number): void {
+    this.currentLevel = level;
     this.tempo = Math.max(180, 280 - level * 10);
     if (this.musicInterval) {
       this.stopMusic();
@@ -93,8 +99,9 @@ export class AudioService {
     }, this.tempo);
   }
 
-  startMusic(level: number = 1): void {
+  startMusic(level: number = this.currentLevel): void {
     if (this.musicInterval) return;
+    this.currentLevel = level;
     this.tempo = Math.max(180, 280 - level * 10);
     this.musicEnabled = true;
     this.startMusicLoop();
@@ -108,16 +115,16 @@ export class AudioService {
   }
 
   pauseMusic(): void {
-    // if (this.muted) return;
     this.stopMusic();
   }
 
-  resumeMusic(level: number = 1): void {
+  resumeMusic(level?: number): void {
     if (this.muted || !this.unlocked || this.musicInterval) return;
     
-    if (this.musicEnabled) {
-      this.startMusic(level);
-    }
+    if (!this.musicEnabled) return;
+
+    const lvl = typeof level !== 'undefined' ? level : this.currentLevel;
+    this.startMusic(lvl);
 
   }
 
