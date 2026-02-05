@@ -51,10 +51,12 @@ export class ControlsComponent {
         this.gameService.start();
         break;
       case this.gameState.Playing:
+        this.audioService.pause();
         this.audioService.pauseMusic();
         this.gameService.pause();
         break;
       case this.gameState.Paused:
+        this.audioService.resume();
         this.audioService.resumeMusic();
         this.gameService.resume();
         break;
@@ -87,23 +89,41 @@ export class ControlsComponent {
   }
 
   @HostListener('window:keydown', ['$event'])
-  handlekey(event: KeyboardEvent) {
-    if (!this.snapshot || this.snapshot.state !== this.gameState.Playing) return;
+  handleKeyDown(event: KeyboardEvent) {
+    if (!this.snapshot) return;
+
+    // Prevent repeated keydown toggles when holding space
+    if (event.code === 'Space' && event.repeat) return;
 
     switch (event.code) {
       case 'ArrowUp':
-        this.move(this.direction.Up);
+        if (this.snapshot.state === this.gameState.Playing) {
+          this.move(this.direction.Up);
+          event.preventDefault();
+        }
         break;
       case 'ArrowDown':
-        this.move(this.direction.Down);
+        if (this.snapshot.state === this.gameState.Playing) {
+          this.move(this.direction.Down);
+          event.preventDefault();
+        }
         break;
       case 'ArrowLeft':
-        this.move(this.direction.Left);
+        if (this.snapshot.state === this.gameState.Playing) {
+          this.move(this.direction.Left);
+          event.preventDefault();
+        }
         break;
       case 'ArrowRight':
-        this.move(this.direction.Right);
+        if (this.snapshot.state === this.gameState.Playing) {
+          this.move(this.direction.Right);
+          event.preventDefault();
+        }
         break;
       case 'Space':
+        // Avoid default so that Space doesn't activate focused buttons.
+        event.preventDefault();
+        event.stopPropagation();
         this.togglePlayPause();
         break;
     }

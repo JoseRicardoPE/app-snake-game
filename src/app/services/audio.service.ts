@@ -76,10 +76,6 @@ export class AudioService {
   startMusicLoop(): void {
     if (this.muted || !this.unlocked || this.musicInterval) return; 
 
-    // if (this.audioContext.state === 'suspended') {
-    //   this.audioContext.resume();
-    // }
-
     const notes = [
       523, 659, 784, 659,   // C5 E5 G5 E5
       523, 659, 784, 880,   // C5 E5 G5 A5
