@@ -1,10 +1,8 @@
 <div class="game-container">
-    <app-score
-        
-    ></app-score>
+    <app-score></app-score>
     <app-board
         (start)="onStart()" 
-        (restart)="onRestart()"         
+        (finish)="onFinish()"         
     ></app-board>
     <app-controls
         

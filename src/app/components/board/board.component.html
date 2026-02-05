@@ -29,8 +29,8 @@
                  <h1 class="game-over-title">!GAME OVER¡</h1>
                  <p class="score">SCORE {{ snapshot.score }}</p>
                  <p class="high-score">HIGH SCORE {{ snapshot.highScore }}</p>     
-                 <button class="game-over-button" (click)="restart.emit()">
-                     <i class="game-over-restart fa-solid fa-play">START</i>
+                 <button class="game-over-button" (click)="finish.emit()">
+                     <i class="game-over-restart fa-solid fa-flag-checkered">FINISH</i>
                  </button>
              </div>
          </div>

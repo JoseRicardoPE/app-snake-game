@@ -53,6 +53,13 @@ export class AppComponent {
     this.gameService.start();
   }
   onRestart() {
+    // restart audio + game immediately from Game Over
+    this.audioService.stopMusic();
+    this.audioService.unlock();
+    this.audioService.startMusic(this.lastLevel);
+    this.gameService.reset();
+  }
+  onFinish() {
     this.audioService.stopMusic();
     this.gameService.reset();
   }
