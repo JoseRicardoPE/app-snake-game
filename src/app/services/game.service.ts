@@ -3,6 +3,8 @@ import { GameSnapshot } from './models/game-snapshot';
 import { GameState } from '../components/board/enum/game-state';
 import { Direction } from '../components/board/enum/direction';
 import { BehaviorSubject } from 'rxjs';
+import { AudioService } from './audio.service';
+import { GameEffectsService } from './game-effects.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +29,11 @@ export class GameService {
 
   private snapshotSubject = new BehaviorSubject<GameSnapshot>(this.state);
   snapshot$ = this.snapshotSubject.asObservable();
+
+  constructor(
+    private audioService: AudioService,
+    private gameEffectsService: GameEffectsService
+  ) {}
 
   /*  ======================
       Public API
@@ -112,24 +119,27 @@ export class GameService {
       case Direction.Up: next -= this.GRID_SIZE; break;
       case Direction.Down: next += this.GRID_SIZE; break;
       case Direction.Left:
-        if (col === 0) return this.gameOver();
+        if (col === 0) return this.onHit();
         next -= 1;
         break;
       case Direction.Right:
-        if (col === this.GRID_SIZE - 1) return this.gameOver();
+        if (col === this.GRID_SIZE - 1) return this.onHit();
         next += 1;
         break;
     }
 
     if (next < 0 || next >= total || this.state.snake.includes(next)) {
-      this.gameOver();
-      return;
+      return this.onHit();;
     }
 
     this.state.snake.unshift(next);
 
     if (next === this.state.food) {
       this.state.score += 1;
+
+      this.audioService.eat();
+      this.gameEffectsService.vibrate([40]);
+      
       this.increaseSpeed();
       this.placeFood();
     } else {
@@ -142,7 +152,12 @@ export class GameService {
    /*  ======================
       Helpers
       ======================  */
-  
+  private onHit() {
+    this.audioService.hit();
+    this.gameEffectsService.vibrate([80, 40, 80]);
+    this.gameOver();
+  }
+
   private resetState() {
     const center = Math.floor(this.GRID_SIZE / 2) * this.GRID_SIZE + 2;
     this.state = {
